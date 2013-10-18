@@ -1,7 +1,7 @@
 ;;; -*- mode: clojure ; coding: utf-8 -*-
 ;;; (c) 2012 Ben Smith-Mannschott -- Distributed under the Eclipse Public License
 
-(ns big-ivan.iban.registry
+(ns big-ivan.iban-macro.registry
   "IBAN registry describing country-specific IBAN formats."
   (:require [clojure.string :as string]))
 
@@ -105,10 +105,3 @@ parameter."
          (str country-code "[0-9]{2}" (bban-format->re-string bban-fmt)))
        (interpose "|")
        (apply str)))
-
-(defmacro iban-pattern
-  "This macro expands to a java Pattern which will match any correctly
-structured known IBAN. The registry determines which IBANs are be
-supported."
-  []
-  (re-pattern (bban-formats->re-string bban-format-map)))

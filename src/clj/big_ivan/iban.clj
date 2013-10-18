@@ -3,22 +3,24 @@
 
 (ns big-ivan.iban
   "Functions which validate, parse and construct IBAN strings."
-  (:require (clojure [string :as string])
-            (big-ivan.iban [check :as check]
-                           [registry :as registry])))
+  (:require [clojure.string :as string]
+            [big-ivan.iban.check :as check])
+  (:require;*CLJSBUILD-REMOVE*;-macros
+   [big-ivan.iban-macro.registry-macro :as registry-macro]))
 
-
-(defn iban?
+(defn ^:export iban?
   "Return s if s is a valid IBAN (a string in IBAN 'electronic'
 format with consistent check digits), otherwise reutrn nil."
   [s]
   (when (and  (string? s)
-              (re-matches (registry/iban-pattern) s)
+              (re-matches (registry-macro/iban-pattern) s)
               (check/check? s))
     s))
 
+(defn ^:export isIban [s] (iban? s))
 
-(defn remove-spaces
+
+(defn ^:export remove-spaces
   "Return iban with any spaces removed.
 This reverts an IBAN in 'printed' representation to the standard's
 'electronic' representation.  Only IBANs in electronic representation
@@ -27,14 +29,14 @@ are valid IBANs with respect to iban?."
   (string/replace iban " " ""))
 
 
-(defn add-spaces
+(defn ^:export add-spaces
   "Return iban with spaces separating non-space characters into groups of four.
 This provides the IBAN standard's 'printed' representation."
   [iban]
   (string/replace (remove-spaces iban) #"[^ ]{4}(?!$)" #(str % \space)))
 
 
-(defn iban
+(defn ^:export iban
   "Construct an iban from a single string or from a country code and a bban.
 
 In the singal argument case, s must satisfy iban? after any spaces have been
@@ -48,7 +50,7 @@ removed."
      (check/set-check (str country-code "00" bban))))
 
 
-(defn country-code
+(defn ^:export country-code
   "Return the country code of iban. iban must be valid."
   [^String iban]
   {:pre [(iban? iban)]
@@ -56,9 +58,8 @@ removed."
   (.substring iban 0 2))
 
 
-(defn bban
+(defn ^:export bban
   "Return the BBAN portion of iban. iban must be valid."
   [^String iban]
   {:pre [(iban? iban)]}
   (.substring iban 4))
-
