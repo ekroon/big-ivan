@@ -6,10 +6,12 @@
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [org.clojure/clojurescript "0.0-1934"]]
   :plugins [[lein-cljsbuild "0.3.4"]]
+  :hooks [leiningen.cljsbuild]
   :source-paths ["src/clj"]
   :cljsbuild {
               :crossovers [big-ivan.bic big-ivan.iban big-ivan.iban.check]
               :crossover-path "target/cljs"
+              :crossover-jar true
               :builds [{
                         :source-paths ["target/cljs" "src/cljs"]
                                         ; The standard ClojureScript compiler options:
