@@ -4,9 +4,10 @@
 (ns big-ivan.iban
   "Functions which validate, parse and construct IBAN strings."
   (:require [clojure.string :as string]
-            [big-ivan.iban.check :as check])
-  (:require;*CLJSBUILD-REMOVE*;-macros
-   [big-ivan.iban-macro.registry-macro :as registry-macro]))
+            [big-ivan.iban.check :as check]
+           #+clj [big-ivan.iban-macro.registry-macro :as registry-macro])
+  #+cljs (:require-macros
+          [big-ivan.iban-macro.registry-macro :as registry-macro]))
 
 (defn ^:export iban?
   "Return s if s is a valid IBAN (a string in IBAN 'electronic'

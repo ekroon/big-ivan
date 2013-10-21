@@ -3,17 +3,22 @@
   :url "http://github.com/bpsm/big-ivan"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
+  :jar-exclusions [#"\.cljx"]
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [org.clojure/clojurescript "0.0-1934"]]
-  :plugins [[lein-cljsbuild "0.3.4"]]
-  :hooks [leiningen.cljsbuild]
+  :plugins [[com.keminglabs/cljx "0.3.0"] [lein-cljsbuild "0.3.4"]]
+  :hooks [cljx.hooks leiningen.cljsbuild]
   :source-paths ["src/clj"]
+  :cljx {:builds [{:source-paths ["src/cljx"]
+                   :output-path "target/classes"
+                   :rules :clj}
+
+                  {:source-paths ["src/cljx"]
+                   :output-path "target/classes"
+                   :rules :cljs}]}
   :cljsbuild {
-              :crossovers [big-ivan.bic big-ivan.iban big-ivan.iban.check]
-              :crossover-path "target/cljs"
-              :crossover-jar true
               :builds [{
-                        :source-paths ["target/cljs" "src/cljs"]
+                        :source-paths ["target/classes"]
                                         ; The standard ClojureScript compiler options:
                                         ; (See the ClojureScript compiler documentation for details.)
                         :compiler {

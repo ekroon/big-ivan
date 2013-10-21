@@ -3,17 +3,11 @@
 
 (ns big-ivan.iban.check
   "implements the ISO-13616 IBAN check digit algorithm"
+  #+clj (:refer-clojure :exclude [read read-string])
+  #+clj (:use [clojure.tools.reader.edn :only [read read-string]])
   (:require [clojure.string :as string]
-            [cljs.reader :refer [read-string]]
-            [goog.string.format :as gformat]))
-
-(defn ?
-  ([x] (if (coll? x)
-         (.log js/console (str x) x)
-         (.log js/console (str x))) x)
-  ([x y] (if (coll? x)
-           (.log js/console (str x ":") (str y) y)
-           (.log js/console (str x ":") (str y))) y))
+            #+cljs [cljs.reader :refer [read-string]]
+            #+cljs [goog.string.format :as gformat]))
 
 (defn letter-to-digits [char]
   "Translate the letters A-Z, a-z to integers 10-36 case insensitively.
@@ -66,7 +60,9 @@ if s does not meet these requirements."
        (re-matches #"[A-Za-z0-9]{4,}" s)
        (-> (str (.substring s 4) (.substring s 0 4))
            letters->digits
-           (mod-reduce 97)
+           #+cljs (mod-reduce 97)
+           #+clj bigint
+           #+clj (mod 97)
            (= 1))))
 
 (defn set-check
@@ -83,4 +79,4 @@ any number of letters or digits."
                        (letters->digits
                         (str bban cc "00"))
                        97)))]
-    (str cc (goog.string.format "%02d" ck) bban)))
+    (str cc #+cljs (goog.string.format "%02d" ck) #+clj (format "%02d" ck) bban)))
